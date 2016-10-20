@@ -19,15 +19,4 @@ router.get('/', function (req, res) {
   res.sendFile(path.resolve('./front/www/index.html'));
 });
 
-// router.get('/testing', function (req, res, next) {
-//   res.send('Hello test route');
-// });
-
-// router.get('/api/:id', function (req, res, next) {
-//   res.json({
-//     message: "This is not the API you're looking for",
-//     id     : req.params.id
-//   });
-// });
-
 module.exports = router;

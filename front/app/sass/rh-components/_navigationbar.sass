@@ -1,0 +1,77 @@
+.navigationbar
+  position: relative
+  height: 5rem
+  background: rgba(255, 255, 255, .8)
+  padding-left: 1.5rem
+  ul
+    @extend %list-horizontal
+    li
+      margin-left: 0
+      margin-right: 3rem
+      line-height: 5rem
+      font-size: 1.6rem
+      font-weight: 600
+
+      a, a:hover
+        color: #333
+        font-weight: 600
+        text-decoration: none
+        cursor: pointer
+
+      a:before
+        +transition-all()
+        content: ''
+        bottom: .8rem
+        height: .4rem
+        position: absolute
+        width: 3.2rem
+        background-color: $color-header
+
+      .active:before, a:hover:before
+        background-color: $red
+
+      &:last-of-type
+        margin-right: 0
+
+.navigationbar-search
+  background: #fff
+  position: absolute
+  right: 0
+  top: 0
+  width: 37rem
+  height: 5rem
+  padding: 0
+  overflow: hidden
+  input
+    border: none
+    box-shadow: none
+    height: 100%
+    width: 100%
+    padding: 0 $base-line-height-double
+    border-radius: 0
+    &:focus
+      background: none
+      border: none
+  input::-webkit-input-placeholder
+    color: $red
+  button
+    +transition-all()
+    position: absolute
+    right: 0
+    border: none
+    background: none
+    height: 100%
+    padding: 0 $base-line-height-double
+    &:hover
+      background: $control-over-color
+  i.fa
+    color: $blue-dark-2
+  p
+    line-height: 5rem
+    color: $red
+    margin: 0
+    padding: 0
+  img
+    position: absolute
+    top: 1.5rem
+    right: 1.5rem

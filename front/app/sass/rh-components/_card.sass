@@ -1,0 +1,124 @@
+$card-horiz-width: 25rem
+$card-margin: 2rem
+
+.rh-card-container-horizontal-table
+  display: table
+  width: 100%
+  table-layout: fixed
+  .rh-card
+    display: table-cell
+
+.rh-card-container-horizontal
+  display: flex
+  min-height: 100%
+  min-width: 100%
+  flex-direction: row
+  flex-wrap: wrap
+  align-items: stretch
+  justify-content: space-between
+  .rh-card
+    flex: 2
+    margin-right: $base-line-height
+    margin-bottom: $base-line-height
+    &:last-of-type
+      margin-right: 0
+
+.rh-card-container-vertical
+  display: flex
+  min-height: 100%
+  min-width: 100%
+  flex-direction: column
+  .rh-card
+    flex: 1
+    margin-bottom: $base-line-height
+
+.rh-card
+  vertical-align: top
+  position: relative
+  margin: 0
+  padding: $card-margin
+  border: 1px solid rgba(0, 0, 0, 0)
+  h1
+    @extend h3
+    margin-bottom: $base-line-height
+    padding: 0
+    font-weight: 600
+    color: $red
+    line-height: $base-line-height-double + $base-line-height-half
+  .padded-topbottom
+    padding-top: $base-line-height
+    padding-bottom: $base-line-height
+  p
+    margin-bottom: 0
+  .interior
+    display: table
+    table-layout: fixed
+    overflow: hidden
+    width: 100%
+    .left
+      display: table-cell
+      width: 33.333333%
+      vertical-align: middle
+    .right
+      display: table-cell
+      width: 66.666666%
+      vertical-align: middle
+
+.rh-card-icon
+  h1
+    text-align: center
+  p
+    text-align: center
+
+.rh-card-header
+  margin: -2rem -2rem $base-line-height -2rem
+  padding: 1.5rem 2rem
+  overflow: hidden
+  h1
+    margin-bottom: 0
+    margin-top: $base-line-height
+  .rh-icon-circle
+    margin: 0 auto
+
+.rh-card-footer
+  margin: $base-line-height -2rem -2rem -2rem
+  padding: 1.5rem 2rem
+  text-align: center
+  a.cta
+    +transition-all()
+    padding: $base-line-height-half
+    border-radius: $base-line-height-half
+    &:hover
+      background: $control-over-color
+
+.rh-card-cta
+  margin-top: 4rem
+
+.rh-card-dark
+  background: #252527
+  h1
+    color: #fff
+  p
+    color: #fff
+  .rh-card-footer
+    a.cta
+      color: #fff
+      &:hover
+        background: $control-over-color-dark
+
+.rh-card-light
+  background: #fff
+
+.rh-card-shaded
+  background: $grey-1
+
+.rh-card-pipes
+  background: rgba(255,255,255,.75) url('../images/sample_image_light.jpg')
+
+.rh-card-sea
+  @extend .rh-card-shaded
+  background: url('../images/sample_image_mid.jpg')
+
+.rh-card-bridge
+  @extend .rh-card-dark
+  background: url('../images/sample_image_dark.jpg')

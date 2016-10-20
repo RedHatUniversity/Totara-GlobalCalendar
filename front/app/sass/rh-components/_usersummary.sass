@@ -1,0 +1,36 @@
+.rh-usersummary
+  position: relative
+  display: table
+  table-layout: fixed
+  margin-bottom: $base-line-height-double
+  .rh-usersummary-profileimage
+    display: table-cell
+    vertical-align: top
+    .rh-icon-circle-image
+      border: 2px solid $blue-dark-2
+  .rh-usersummary-details
+    display: table-cell
+    padding-left: $base-line-height-double
+    vertical-align: middle
+    h1
+      @extend h3
+    h2
+      @extend h5
+    h1, h2
+      margin: 0
+    h2
+      color: $blue-dark-2
+
+.rh-usersummary-stacked
+  @extend .rh-usersummary
+  text-align: center
+  display: block
+  .rh-usersummary-profileimage, .rh-usersummary-details
+    width: 100%
+    display: block
+  .rh-usersummary-profileimage
+    .rh-icon-circle-image
+      margin: 0 auto
+      margin-bottom: $base-line-height
+  .rh-usersummary-details
+    padding-left: 0

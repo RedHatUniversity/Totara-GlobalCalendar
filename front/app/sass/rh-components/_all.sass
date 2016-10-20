@@ -1,0 +1,93 @@
+@import "buttons"
+@import "tabs"
+@import "breadcrumbs"
+@import "well"
+@import "progress"
+@import "modules"
+@import "card"
+@import "panel"
+@import "icons"
+@import "navigationbar"
+@import "usersummary"
+@import "pagination"
+@import "utilitybar"
+@import "blocklinks"
+@import "buttongroup"
+
+
+.rh-event-break-through
+  @extend h5
+  display: block
+  width: 100%
+  text-align: center
+  margin: 0
+  padding: 0
+  padding-bottom: $base-line-height
+
+// Expected to be inside of a card
+
+.rh-card-event
+  width: 350px
+
+.rh-event
+  @extend %list-plain
+  width: 100%
+  background: rgba(255,255,255,.75)
+  padding: $base-line-height-half
+  overflow: hidden
+  border-radius: $base-line-height-half
+  li
+    width: 100%
+    text-align: center
+    margin: 0
+    padding: 0
+  .month
+    text-transform: uppercase
+    font-size: 1.4rem
+    color: $blue-dark
+    font-weight: 600
+  .day
+    font-size: 4rem
+    color: $blue-dark
+    font-weight: 600
+    padding: 1rem 0
+  .year
+    text-transform: uppercase
+    font-size: 1.4rem
+    color: $blue-dark-2
+    font-weight: 400
+
+.rh-event-details
+  @extend %list-plain
+  width: 100%
+  padding: $base-line-height-half
+  padding-left: $base-line-height
+  overflow: hidden
+  li
+    width: 100%
+    margin: 0
+    padding: 0
+  .class
+    font-size: 1.8rem
+    font-weight: 600
+    color: $blue-dark
+    border-bottom: 1px solid $blue-dark-2
+    padding-bottom: 1rem
+    margin-bottom: 1rem
+  .city, .room, .timezone
+    font-size: 1.6rem
+    color: $blue-dark-2
+    line-height: $base-line-height + $base-line-height-half
+  .city
+    text-transform: uppercase
+    margin-bottom: $base-line-height-half
+    font-weight: 600
+  .startime, .endtime
+    font-size: 1.8rem
+    font-weight: 600
+    color: $blue-dark
+  .endtime
+    color: $blue-dark-2
+    border-bottom: 1px solid $blue-dark-2
+    padding-bottom: 1rem
+    margin-bottom: 1rem

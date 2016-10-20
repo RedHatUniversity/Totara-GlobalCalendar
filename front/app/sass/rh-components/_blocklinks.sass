@@ -1,0 +1,59 @@
+.block-links
+  margin: 0
+  padding: 0
+  overflow: hidden
+  li
+    list-style: none
+    margin-left: 0
+    a:before
+      content: '\f18e'
+      font-family: 'FontAwesome'
+      font-weight: 400
+      padding-right: $base-line-height-half
+      color: rgba(255,255,255,.75)
+    a
+      +transition-all()
+      @extend %control-button-text
+      display: block
+      background: $color-link
+      color: #fff
+      //font-weight: 600
+      padding: $base-line-height
+      margin-bottom: $base-line-height-half
+    a:hover
+      text-decoration: none
+      background: $color-link-hover
+    em
+      display: block
+      font-style: italic
+      font-weight: 400
+      font-size: 1.4rem
+      text-transform: none
+
+.block-links-shaded
+  @extend .block-links
+  li
+    a
+      background: $grey-9
+    a:hover
+      background: $grey-7
+
+.block-links-white
+  @extend .block-links
+  li
+    a
+      color: $color-body
+      background: #fff
+    a:hover
+      background: #ccc
+    a:before
+      color: $red
+
+.block-links-horizontal
+  display: table
+  table-layout: fixed
+  li
+    display: table-cell
+    padding-right: $base-line-height
+    &:last-of-type
+      padding-right: 0

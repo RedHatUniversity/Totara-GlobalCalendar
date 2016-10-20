@@ -1,0 +1,7 @@
+{
+  "presets": [
+    "es2015-webpack-loose",
+    "stage-0",
+    "react"
+  ]
+}

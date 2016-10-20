@@ -1,0 +1,43 @@
+%control-button-text
+  font-family: $base-font-header
+  font-weight: 700
+  text-transform: uppercase
+  font-size: 1.6rem
+
+.rh-button
+  +transition-all
+  @extend %control-button-text
+  height: 4rem
+  padding: 0 4rem 0 4rem
+  line-height: 4rem
+  margin: 0
+  background: $red
+  border: none
+  color: #fff
+  border: 1px solid $color-nocolor
+  &:hover
+    background: rgb(161, 4, 12)
+
+.rh-button-secondary
+  background: none
+  border: 1px solid $red
+  color: $red
+  &:hover
+    background: none
+    border: 1px solid rgb(161, 4, 12)
+    color: rgb(161, 4, 12)
+
+.rh-button-admin
+  background: rgb(122, 133, 138)
+  &:hover
+    background: rgb(89, 102, 109)
+
+.rh-button-container-horiz
+  width: 100%
+  display: block
+  margin: $base-line-height 0
+  text-align: center
+  button
+    margin-right: $base-line-height
+  &:last-of-type
+    margin-right: 0

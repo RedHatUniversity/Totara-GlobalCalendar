@@ -1,0 +1,26 @@
+$icon-size: 8rem
+
+=circle-icon($size, $forecolor, $iconcolor)
+  width: $size
+  height: $size
+  border-radius: $size / 2
+  background: $forecolor
+  color: $iconcolor
+  font-size: 3.4rem
+  font-weight: 300
+  line-height: $size
+  text-align: center
+  overflow: hidden
+
+.rh-icon-circle
+  +circle-icon($icon-size, $red, #fff)
+
+.rh-icon-circle-image
+  +circle-icon($icon-size, $color-nocolor, $color-body)
+  position: relative
+  img
+    width: $icon-size
+    height: $icon-size
+    position: absolute
+    top: 0
+    left: 0

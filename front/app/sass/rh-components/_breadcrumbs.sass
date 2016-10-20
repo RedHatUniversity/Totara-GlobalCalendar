@@ -1,0 +1,14 @@
+.rh-breadcrumbs
+  @extend %list-horizontal
+  padding: 2.2rem 0 !important
+  li, li > a
+    font-size: 1.6rem
+    font-weight: 600
+    margin: 0
+    padding: 0
+  li:after
+    content: ">"
+    font-weight: 300
+    padding: 0 $base-line-height-half
+  li:last-of-type:after
+    content: ""

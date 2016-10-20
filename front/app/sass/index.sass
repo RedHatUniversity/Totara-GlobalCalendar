@@ -1,0 +1,125 @@
+@import "vendor/normalize"
+@import "vendor/font-awesome/font-awesome"
+@import "core/all"
+@import "rh-components/all"
+@import "rh-lms/all"
+
+.calendar-header
+  background: $blue-dark
+  margin-top: -$base-line-height-double
+  margin-left: -$base-line-height
+  margin-right: -$base-line-height
+  margin-bottom: $base-line-height-double
+  padding: $base-line-height-double $base-line-height
+  padding-top: $base-line-height-triple
+  h1
+    color: rgba(255,255,255,.8)
+    font-size: 2.4rem
+    font-weight: 400
+    margin: 0
+    em
+      color: #fff
+      font-weight: 600
+      font-style: normal
+
+.rh-app-loading-message
+  color: $blue-dark
+  text-align: center
+  margin: $base-line-height-triple
+
+.rh-app-loading-message-error
+  color: $red-dark-2
+  text-align: center
+  margin: $base-line-height-triple
+
+.rh-padded
+  padding: $base-line-height
+
+.rh-calendar
+  position: absolute
+  top: 0
+  left: 0
+  bottom: 0
+  right: 0
+  padding: $base-line-height
+  background-color: #fff
+  overflow-y: scroll
+
+// RBC Overrides
+
+.rbc-calendar
+  height: 75%
+
+button
+  @extend .rh-button
+
+.rbc-toolbar
+  margin-bottom: $base-line-height-double
+
+.rbc-toolbar button:active, .rbc-toolbar button.rbc-active
+  background-color: $blue-dark
+  color: #fff
+
+.rbc-toolbar-label
+  @extend h2
+  padding: 0
+  margin: 0
+
+.rbc-month-view .rbc-header, .rbc-row .rbc-header, .rbc-row .rbc-header-gutter
+  background-color: rgba(0,0,0,.05)
+  font-weight: 400
+  border-bottom: 3px solid #ddd
+
+.rbc-date-cell > a
+  font-weight: 600
+  color: $blue-dark-2 !important
+
+.rbc-show-more
+  text-align: center
+  margin-top: $base-line-height
+  color: $color-link
+  font-weight: 400
+  text-decoration: underline
+
+//.rbc-event-overlaps
+//  &:not(:first-child)
+
+
+.rbc-event, .rbc-day-slot .rbc-event
+  border: 1px solid rgba(0,0,0,.1)
+  border-left: 5px solid rgba(0,0,0,.3)
+  margin: 0 1px 1px 1px
+  padding: 1px $base-line-height-half
+  border-radius: 0 $base-line-height-half $base-line-height-half 0
+  font-size: 1.4rem
+  opacity: 0.9
+  //line-height: 1.4rem
+  //text-shadow: 1px 1px 1px rgba(0,0,0,.75)
+
+.calendar-legend
+  background-color: rgba(0,0,0,.05)
+  margin-top: $base-line-height-triple
+  padding: $base-line-height
+  padding-bottom: 0
+  p
+    @extend h5
+  ul
+    @extend .list-plain
+    padding-top: $base-line-height
+    padding-bottom: 0
+    li
+      @extend .rbc-event
+      display: inline-block
+      margin-right: $base-line-height
+      margin-bottom: $base-line-height
+      color: #fff
+      background-color: #3A017F
+      text-transform: none
+    .cat1
+      background-color: #0B85CB
+    .cat2
+      background-color: #A2040C
+    .cat3
+      background-color: #429C40
+    .cat4
+      background-color: #374249

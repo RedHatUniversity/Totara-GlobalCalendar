@@ -1,0 +1,28 @@
+.rh-pagination
+  @extend %list-horizontal
+  padding: $base-line-height 0
+  width: 100%
+  text-align: center
+  ul
+    display: inline-block
+    margin: 0
+  li
+    font-size: 1.6rem
+    font-weight: 600
+    margin: 0
+    padding: 0
+    a
+      @extend %control-button-text
+      +transition-all()
+      color: $grey-12
+      padding: $base-line-height-half $base-line-height
+      &:hover
+        text-decoration: none
+        background: $control-over-color
+  span.active
+    padding: $base-line-height-half $base-line-height
+    color: #fff
+    background: $grey-12
+  span.disabled
+    padding: $base-line-height-half $base-line-height
+    color: $grey-light

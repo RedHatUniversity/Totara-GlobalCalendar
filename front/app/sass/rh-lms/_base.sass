@@ -1,0 +1,62 @@
+$footer-height: 6rem
+
+%page-region-base
+  display: block
+  overflow: hidden
+  position: relative
+  width: 100%
+  padding: 0
+  margin: 0
+
+.content-region
+  @extend %page-region-base
+  background: #fff
+  margin-bottom: $footer-height
+
+.page-container
+  display: block
+  position: relative
+  width: 1200px
+  // same as $mqbp-huge var
+  padding: 0 1.5rem
+  margin: 0 auto
+  overflow: hidden
+  &:after
+    content: ""
+    display: table
+    clear: both
+
+// h add top padding to headers in containers to separate sections
+.page-container-header
+  padding-top: 3rem
+  margin-top: 3rem
+
+.page-container-header-border
+  padding-top: 3rem
+  margin-top: 3rem
+  border-top: 1px solid #c00
+
+// Removed for single column home page
+.page-container-column-left
+  width: 66.66666666666666%
+  display: inline
+  float: left
+  min-height: 1px
+  padding-left: $grid-padding
+  padding-right: $grid-padding
+  &:first-of-type
+    padding-left: 0
+  &:last-of-type
+    padding-right: 0
+
+.page-container-column-right
+  width: 33.33333333333333%
+  display: inline
+  float: left
+  min-height: 1px
+  padding-left: $grid-padding
+  padding-right: $grid-padding
+  &:first-of-type
+    padding-left: 0
+  &:last-of-type
+    padding-right: 0

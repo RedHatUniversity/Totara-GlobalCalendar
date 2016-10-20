@@ -1,0 +1,13 @@
+=image-cover
+  background-size: cover
+
+=background-cover-image($url)
+  background: url($url) no-repeat center center fixed
+  +image-cover
+
+%full-background-coverage
+  position: fixed
+  top: 0
+  left: 0
+  bottom: 0
+  right: 0

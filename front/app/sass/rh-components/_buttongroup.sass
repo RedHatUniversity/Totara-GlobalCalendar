@@ -1,0 +1,33 @@
+.rh-buttongroup
+  width: 100%
+  text-align: center
+  ul
+    @extend %list-horizontal
+    display: inline-block
+    height: 4rem
+    border: 1px solid $red
+    border-radius: $base-line-height-half
+    overflow: hidden
+    li
+      margin: 0
+      padding: 0
+      border-right: 1px solid $red
+      &:last-of-type
+        border-right: none
+      a
+        +transition-all()
+        @extend %control-button-text
+        line-height: 4rem
+        padding: 2rem 4rem !important
+        color: $red
+        padding: $base-line-height-half
+      a:hover
+        background: $control-over-color
+        text-decoration: none
+    li.active
+      a
+        background: $red
+        color: #fff
+      a:hover
+        text-decoration: none
+        color: #fff

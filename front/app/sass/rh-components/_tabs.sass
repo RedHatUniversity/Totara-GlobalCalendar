@@ -1,0 +1,27 @@
+.rh-tabs
+  margin-bottom: 4rem
+  ul
+    @extend %list-horizontal
+    height: 4rem
+    border-bottom: 1px solid $red
+    li
+      margin: 0
+      padding: 0
+      a
+        +transition-all()
+        @extend %control-button-text
+        //font-weight: 400
+        line-height: 4rem
+        padding: 2rem 4rem !important
+        color: $red
+        padding: $base-line-height-half
+      a:hover
+        background: $control-over-color
+        text-decoration: none
+    li.active
+      a
+        background: $red
+        color: #fff
+      a:hover
+        text-decoration: none
+        color: #fff

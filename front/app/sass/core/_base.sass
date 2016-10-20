@@ -1,0 +1,222 @@
+@import "overpass"
+@import "variables"
+@import "responsive"
+@import "mixins/utils"
+@import "mixins/typography"
+@import "mixins/shadows"
+@import "mixins/animation"
+@import "mixins/transform"
+
+html
+  -ms-text-size-adjust: 100%
+  -moz-text-size-adjust: 100%
+  box-sizing: border-box
+  -webkit-text-size-adjust: none
+  height: 100%
+  font-size: 62.5% // 1rem will eq 10px
+
+*, *::before, *::after
+  box-sizing: border-box
+
+body
+  @extend %body-base
+  margin: 0
+  padding: 0
+  min-height: 100%
+  background: rgb(240,240,240)
+
+#app
+  height: 100%
+
+#app > div
+  min-height: 100%
+  display: flex
+  flex-direction: column
+
+//------------------------------------------------------------------------------
+// Headers
+//------------------------------------------------------------------------------
+
+%header-base
+  font-family: $base-font-header
+  color: $color-header
+  font-weight: 700
+  padding: 0
+  margin: 0
+  margin-bottom: $base-line-height-double
+  line-height: 2.4rem
+
+h1
+  @extend %header-base
+  font-size: 4.2rem
+  margin-top: $base-line-height
+  line-height: 4.2rem
+
+h2
+  @extend %header-base
+  font-size: 2.2rem
+  text-transform: uppercase
+
+h3
+  @extend %header-base
+  font-size: 2.2rem
+
+h4
+  @extend %header-base
+  font-size: 1.8rem
+
+h5
+  @extend %header-base
+  font-size: 1.6rem
+  text-transform: uppercase
+
+h6
+  @extend %header-base
+  font-size: 1.6rem
+
++max-width($mqbp-small)
+  %header-base-mobile
+    line-height: 2.2rem
+    margin-bottom: 1.8rem
+  h1
+    @extend %header-base-mobile
+    font-size: 3.2rem
+  h2
+    @extend %header-base-mobile
+    font-size: 1.8rem
+  h3
+    @extend %header-base-mobile
+    font-size: 1.8rem
+  h4
+    @extend %header-base-mobile
+    font-size: 1.6rem
+
+//------------------------------------------------------------------------------
+// Copy
+//------------------------------------------------------------------------------
+
+%body-base
+  font-family: $base-font-content
+  color: $color-body
+  font-weight: normal
+  font-size: 1.8rem
+  line-height: 2.4rem
+  margin: 0
+  padding: 0
+
+%body-base-small
+  @extend %body-base
+  font-size: 1.2rem
+  line-height: 1.8rem
+
+%body-base-alt
+  @extend %body-base
+  font-size: 2.2rem
+
+p, a, ul, ol, li, pre, td, th, dl, dd, dt
+  @extend %body-base
+
+.body_alt
+  @extend %body-base-alt
+
+blockquote
+  @extend %body-base-alt
+  margin-top: $base-line-height-double
+
+p, ul, ol, blockquote, pre
+  margin-bottom: $base-line-height-double
+
+a, a:visited
+  color: $color-link
+  text-decoration: none
+
+a:hover, a:active
+  text-decoration: underline
+
+strong
+  font-weight: 700
+
+em
+  font-style: italic
+
+small, .small
+  @extend %body-base-small
+
+ul, ol
+  padding-left: 0
+  margin-left: 0
+
+ul
+  list-style: disc inside
+
+ol
+  list-style: decimal inside
+
+ul li, ol li
+  margin-left: $base-line-height
+  margin-bottom: 0
+
+ul ul, ol ol, ul ol, ol ul
+  margin: 0 0 0 $base-line-height-double
+
+ol ol
+  list-style: lower-alpha
+
+ol ol ol
+  list-style: lower-roman
+
+ul ul
+  list-style: circle
+
+hr
+  border: none
+  border-bottom: 1px solid $grey-2
+  margin: $base-line-height-triple 0
+  padding: 0
+
+//------------------------------------------------------------------------------
+// Images
+//------------------------------------------------------------------------------
+
+svg:not(:root)
+  overflow: hidden
+
+img
+  vertical-align: middle
+
+//------------------------------------------------------------------------------
+// Forms
+//------------------------------------------------------------------------------
+
+input:focus, textarea:focus, button:focus
+  outline: 0
+
+//------------------------------------------------------------------------------
+// Components shared
+//------------------------------------------------------------------------------
+
+.disclaimer
+  @extend %body-base
+  font-size: 1.2rem
+  font-weight: 600
+
+.section-title
+  @extend h3
+  color: $color-header-title
+  text-transform: uppercase
+  margin: 0
+  padding: 0
+  margin-top: 2.4rem
+  margin-bottom: 3.4rem
+
+a.cta
+  color: $color-body
+  text-transform: uppercase
+  font-weight: 800
+  &:hover
+    text-decoration: none
+  &:after
+    content: '\f0da'
+    font-family: 'FontAwesome'
+    color: #c00
+    padding-left: $base-line-height-half

@@ -1,0 +1,115 @@
+.rh-table
+  margin: 0
+  margin-bottom: $base-line-height
+  padding: 0
+  width: 100%
+  table-layout: fixed
+  border-spacing: 0
+  border-collapse: collapse
+
+  th, td
+    @extend %body-base
+    margin-bottom: 0
+    display: table-cell
+    padding: $base-line-height $base-line-height-double
+    border: none
+    vertical-align: top
+
+  thead
+    background: #4c4c4c
+    th
+      color: #fff
+      font-weight: 700
+      vertical-align: bottom
+      text-align: left
+      white-space: nowrap
+      i.fa
+        padding-left: $base-line-height-half
+    .sortable
+      +transition-all()
+      cursor: pointer
+      &:hover
+        background: $control-over-color-dark
+
+
+  tfoot
+    td
+      @extend .small
+      padding: $base-line-height $base-line-height-double
+      border-bottom: none
+      vertical-align: top
+      color: $color-body-alt
+
+  //tbody
+  //    td
+  //        font-size: 16px
+
+  .column-50px
+    width: 50px
+
+  .column-100px
+    width: 100px
+
+  .column-200px
+    width: 200px
+
+  .column-300px
+    width: 300px
+
+  .column-10pct
+    width: 10%
+
+  .column-15pct
+    width: 15%
+
+  .column-20pct
+    width: 20%
+
+  .column-25pct
+    width: 25%
+
+  .column-50pct
+    width: 50%
+
+  .middle-align
+    vertical-align: middle
+
+  .left-column
+    text-align: left
+
+  .center-column
+    text-align: center
+
+  .right-column
+    text-align: right
+
+.rh-table-zebra
+  tbody
+    th, td
+      border-bottom: none
+    tr:nth-child(odd)
+      background-color: $color-table-zebra
+
+.rh-table-small
+  thead
+    th
+      font-size: 1.4rem
+      font-weight: 600
+      padding: $base-line-height-half $base-line-height
+  tbody
+    td
+      font-size: 1.4rem
+      padding: $base-line-height-half $base-line-height
+      li, p, a
+        font-size: 1.4rem
+
+.rh-table-hover
+  tbody:hover > tr td
+    color: rgba(0, 0, 0, .25)
+  tbody
+    tr
+      +transition-prop(background-color, .25s)
+    tr:hover
+      background-color: rgba(0, 0, 0, .15) !important
+      td
+        color: $blue-dark

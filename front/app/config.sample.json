@@ -1,0 +1,6 @@
+{
+  "webservice":{
+    "urlStem":"https://lms.com",
+    "token":"123456"
+  }
+}

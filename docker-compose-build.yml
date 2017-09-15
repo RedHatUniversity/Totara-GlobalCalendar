@@ -1,0 +1,14 @@
+version: "3"
+services:
+  web-prod:
+    build:
+      context: .
+      dockerfile: Dockerfile-front
+    ports:
+    - "8080:8080"
+    volumes:
+    - .:/usr/src/app/:rw
+    - /usr/src/app/node_modules
+    environment:
+    - NODE_ENV=production
+    command: npm run build:prod

@@ -1,0 +1,14 @@
+version: "3"
+services:
+  web-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile-front
+    ports:
+    - "3000:3000"
+    volumes:
+    - .:/usr/src/app/:rw
+    - /usr/src/app/node_modules
+    environment:
+    - NODE_ENV=dev
+    command: npm run dev

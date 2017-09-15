@@ -256,11 +256,12 @@ module.exports.getMatchTimes = (str) => {
 };
 
 function hrTo24(hr, pm) {
-  hr = parseInt(hr) + (pm ? 12 : 0);
-  if(hr < 10) {
-    hr = '0' + hr;
+  hr = parseInt(hr);
+  let fhr = (hr === 12 ? 0 : hr) + (pm ? 12 : 0);
+  if(fhr < 10) {
+    fhr = '0' + fhr;
   }
-  return hr;
+  return fhr;
 }
 
 function formatSecondsToHHMM(seconds) {

@@ -10,7 +10,7 @@ import css from './sass/index.sass';
 //https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/includes
 if (!Array.prototype.includes) {
   Array.prototype.includes = function(searchElement /*, fromIndex*/) {
-    'use strict';
+    /* eslint-disable */
     if (this == null) {
       throw new TypeError('Array.prototype.includes called on null or undefined');
     }
@@ -44,7 +44,7 @@ if (!Array.prototype.includes) {
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/findIndex
 if (!Array.prototype.findIndex) {
   Array.prototype.findIndex = function(predicate) {
-    'use strict';
+    /* eslint-disable */
     if (this == null) {
       throw new TypeError('Array.prototype.findIndex called on null or undefined');
     }

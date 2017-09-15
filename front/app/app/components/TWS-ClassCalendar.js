@@ -1,10 +1,9 @@
 import React from 'react';
 import BigCalendar from 'react-big-calendar';
 import moment from 'moment';
-import {debounce} from 'lodash';
-import {requestCalendar} from '../utils/TotaraLoadGlobalCalendar';
-import {getReformattedData} from '../utils/ReformatEventsForRBC';
-import {getCurrentRoute, setRoute} from '../utils/HashRouter';
+import { requestCalendar } from '../utils/TotaraLoadGlobalCalendar';
+import { getReformattedData } from '../utils/ReformatEventsForRBC';
+import { getCurrentRoute, setRoute } from '../utils/HashRouter';
 
 // CSS styles for the calendar component
 import calcss from 'react-big-calendar/lib/css/react-big-calendar.css';
@@ -13,10 +12,9 @@ BigCalendar.setLocalizer(
   BigCalendar.momentLocalizer(moment)
 );
 
-
 class ClassCalendar extends React.Component {
 
-  constructor() {
+  constructor () {
     super();
     this.state = {
       calendarData    : {
@@ -36,14 +34,15 @@ class ClassCalendar extends React.Component {
       selectedRegion  : '',
       selectedCountry : '',
       selectedCity    : '',
-      searchText      : ''
+      searchText      : '',
+      searchId        : ''
     };
   }
 
-  componentDidMount() {
+  componentDidMount () {
     this.setSearchParams();
     console.time('loading');
-    requestCalendar(this.props.config.webservice).then((data) => {
+    requestCalendar(this.props.config.webservice, this.props.config.alwaysInclude).then((data) => {
       this.setCalendarData(data);
       console.timeEnd('loading');
     }).catch((err) => {
@@ -51,23 +50,25 @@ class ClassCalendar extends React.Component {
     });
   }
 
-  setSearchParams() {
+  setSearchParams () {
     let currentHash   = getCurrentRoute().data,
         searchRegion  = currentHash.rg || '',
         searchCountry = currentHash.cn || '',
         searchCity    = currentHash.cy || '',
+        searchId      = currentHash.id || '',
         showFilters   = parseInt(currentHash.f) === 1 ? true : false;
 
-    console.log('Passed search params: ', searchRegion, searchCountry, searchCity);
+    console.log('Passed search params: ', searchRegion, searchCountry, searchCity, searchId);
     this.setState({
       selectedRegion : searchRegion,
       selectedCountry: searchCountry,
-      searchCity     : searchCity,
+      selectedCity   : searchCity,
+      searchId       : searchId,
       showFilters    : showFilters
     });
   }
 
-  setCalendarData(data) {
+  setCalendarData (data) {
     let cleanedCalendarData = getReformattedData(data.calendar);
     this.setState({
       calendarData: {
@@ -84,15 +85,15 @@ class ClassCalendar extends React.Component {
     });
   }
 
-  onCategoryChange(e) {
+  onCategoryChange (e) {
     this.setState({selectedCategory: this.refs.categorySelect.value});
   }
 
-  onMoDChange(e) {
+  onMoDChange (e) {
     this.setState({selectedMoD: this.refs.modSelect.value});
   }
 
-  onRegionChange(e) {
+  onRegionChange (e) {
     let region  = this.refs.regionSelect.value,
         country = this.autoSelectCountry(region),
         city    = this.autoSelectCity(region, country);
@@ -104,7 +105,7 @@ class ClassCalendar extends React.Component {
     });
   }
 
-  onCountryChange(e) {
+  onCountryChange (e) {
     let region  = this.refs.regionSelect.value,
         country = this.refs.countrySelect.value,
         city    = this.autoSelectCity(region, country);
@@ -112,11 +113,11 @@ class ClassCalendar extends React.Component {
     this.setState({selectedCountry: country, selectedCity: city});
   }
 
-  onCityChange(e) {
+  onCityChange (e) {
     this.setState({selectedCity: this.refs.citySelect.value});
   }
 
-  autoSelectCountry(region) {
+  autoSelectCountry (region) {
     if (region.length < 1) {
       return '';
     }
@@ -124,7 +125,7 @@ class ClassCalendar extends React.Component {
     return countries.length === 1 ? countries[0] : '';
   }
 
-  autoSelectCity(region, country) {
+  autoSelectCity (region, country) {
     if (region.length < 1 || country.length < 1) {
       return '';
     }
@@ -132,22 +133,24 @@ class ClassCalendar extends React.Component {
     return cities.length === 1 ? cities[0] : '';
   }
 
-  componentWillUpdate(nextProps, nextState) {
+  componentWillUpdate (nextProps, nextState) {
     setRoute('/', {
       rg: nextState.selectedRegion,
       cn: nextState.selectedCountry,
       cy: nextState.selectedCity,
+      id: nextState.searchId,
       f : nextState.showFilters ? '1' : '0'
-    })
+    });
   }
 
-  getFilteredCalendarEvents() {
+  getFilteredCalendarEvents () {
     let events         = this.state.calendarData.events,
         filterMod      = this.state.selectedMoD,
         filterCategory = this.state.selectedCategory,
         filterRegion   = this.state.selectedRegion,
         filterCountry  = this.state.selectedCountry,
-        filterCity     = this.state.selectedCity;
+        filterCity     = this.state.selectedCity,
+        filterId       = this.state.searchId;
 
     return events.filter((evt) => {
       // let name          = evt.fullname.toLowerCase(),
@@ -159,9 +162,10 @@ class ClassCalendar extends React.Component {
 
       let matchRegion  = filterRegion.length ? evt.region === filterRegion : true,
           matchCountry = filterCountry.length ? evt.country === filterCountry : true,
-          matchCity    = filterCity.length ? evt.city === filterCity : true;
+          matchCity    = filterCity.length ? evt.city === filterCity : true,
+          matchId      = filterId.length ? evt.courseid === parseInt(filterId) : true;
 
-      return matchRegion && matchCountry && matchCity;
+      return matchRegion && matchCountry && matchCity && matchId;
     });
   }
 
@@ -169,13 +173,36 @@ class ClassCalendar extends React.Component {
   //  Render
   //----------------------------------------------------------------------------
 
-  selectEvent(event) {
+  selectEvent (event) {
     console.log('selected event', event);
     window.open(event.link);
   }
 
-  render() {
+  render () {
     let content = <p>Please wait, loading the calendar ...</p>;
+
+    /*
+    Add this to the top - NHO sites
+     NA -
+     Raleigh
+
+     APAC -
+     Singapore
+     Beijing - Parkview Green
+     Beijing - Raycom
+     Pune
+     Bangalore
+     Tokyo
+     Brisbane
+
+     EMEA -
+     Munich
+
+     LATAM -
+     Sao Paulo
+     Buenos Aires
+     Mexico City
+    */
 
     if (this.state.calendarData.events) {
       // console.log('events',this.state.calendarData.events);
@@ -184,11 +211,15 @@ class ClassCalendar extends React.Component {
 
           <div className="rh-calendar">
             <div className="calendar-header">
-              <h1><em>Global Calendar</em> - Learning Management System for Associates</h1>
+              <h1><em>Global Calendar</em> - Learning Management System for
+                Associates</h1>
             </div>
-            <p>To find events in your area, first select the&nbsp;
+            <p className="text-center">To find events in your area, first select
+              the&nbsp;
               <strong>region</strong>
               &nbsp;then <strong>country</strong> and <strong>city</strong>.</p>
+            <p className="text-center"><strong>Note: </strong>NHO is only
+              available in <a href="#nho-classes">certain cities</a>.</p>
             {this.renderFilterForm()}
             <hr/>
             <BigCalendar
@@ -196,10 +227,12 @@ class ClassCalendar extends React.Component {
               defaultDate={new Date()}
               onSelectEvent={this.selectEvent.bind(this)}
               eventPropGetter={this.getEventStyle.bind(this)}
-              views={['month', 'week', 'day', 'agenda']}
+              views={['month']}
+              popup={true}
+              allDayAccessor={() => false}
             />
             <div className="calendar-legend">
-              <p>Legend:
+              <p>Legend
                 <ul>
                   <li className="cat1">Manager Development and Team Leadership
                   </li>
@@ -212,10 +245,52 @@ class ClassCalendar extends React.Component {
                 </ul>
               </p>
             </div>
+            <hr/>
+            <div>
+              <div className="grid-row">
+                <div className="grid-col-2"></div>
+                <div className="grid-col-8">
+                  <h3 id="nho-classes">NHO Class Availability</h3>
+                  <p>The New Hire Orientation class is only available in these
+                    cities:</p>
+                  <div className="grid-row">
+                    <div className="grid-col-6">
+                      <h5>APAC</h5>
+                      <ul>
+                        <li>Singapore</li>
+                        <li>Beijing - Parkview Green</li>
+                        <li>Beijing - Raycom</li>
+                        <li>Pune</li>
+                        <li>Bangalore</li>
+                        <li>Tokyo</li>
+                        <li>Brisbane</li>
+                      </ul>
+                    </div>
+                    <div className="grid-col-6">
+                      <h5>NA</h5>
+                      <ul>
+                        <li>Raleigh</li>
+                      </ul>
+                      <h5>EMEA</h5>
+                      <ul>
+                        <li>Munich</li>
+                      </ul>
+                      <h5>LATAM</h5>
+                      <ul>
+                        <li>Sao Paulo</li>
+                        <li>Buenos Aires</li>
+                        <li>Mexico City</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+                <div className="grid-col-2"></div>
+              </div>
+            </div>
           </div>
         </div>);
     } else if (this.state.calendarData.raw && !this.state.calendarData.events) {
-      content = <h2>There was a problem getting events for the calendar</h2>
+      content = <h2>There was a problem getting events for the calendar</h2>;
     }
 
     return (<div>
@@ -223,8 +298,8 @@ class ClassCalendar extends React.Component {
     </div>);
   }
 
-  getEventStyle(event, start, end, isSelected) {
-    let backgroundColor = '#3A017F';
+  getEventStyle (event, start, end, isSelected) {
+    let backgroundColor = '#666666';
     if (event.category === 'Manager Development and Team Leadership') {
       backgroundColor = '#0B85CB';
     } else if (event.category === 'Professional Development and Individual Leadership') {
@@ -242,7 +317,7 @@ class ClassCalendar extends React.Component {
     };
   }
 
-  renderFilterForm() {
+  renderFilterForm () {
     let availableCities    = this.state.calendarData.city,
         availableCountries = this.state.calendarData.country,
         disableCountry     = this.state.selectedRegion.length < 1,

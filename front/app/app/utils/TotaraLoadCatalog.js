@@ -32,14 +32,14 @@ let {request}           = require('./Rest'),
  * @param wsConfig
  * @returns {Promise}
  */
-module.exports.requestCatalog = (wsConfig) => {
+module.exports.requestCatalog = (wsConfig, alwaysInclude) => {
 
   webserviceConfig = wsConfig;
 
   return new Promise((resolve, reject) => {
     let categoryReq, catalogReq;
 
-    function createWSURL(funct) {
+    function createWSURL (funct) {
       return webserviceConfig.urlStem + wsURL + '?' + getParameterString({
           wstoken           : webserviceConfig.token,
           wsfunction        : funct,
@@ -47,26 +47,26 @@ module.exports.requestCatalog = (wsConfig) => {
         });
     }
 
-    categoryReq = requestCategories(wsConfig).then((data)=>{
+    categoryReq = requestCategories(wsConfig).then((data) => {
       console.log('Loaded categories');
       return data;
-    }).catch((err)=> {
+    }).catch((err) => {
       reject('Error fetching course categories', err);
     });
 
     catalogReq = request({
       json: true,
       url : createWSURL('core_course_get_courses')
-    }).then((data)=> {
+    }).then((data) => {
       console.log('Loaded catalog');
       return data;
-    }).catch((err)=> {
+    }).catch((err) => {
       reject('Error fetching course catalog', err);
     });
 
     Promise.all([categoryReq, catalogReq]).then(data => {
-      courseCategories = data[0];
-      let cleanedCatalogData = cleanCatalogData(data[1]);
+      courseCategories       = data[0];
+      let cleanedCatalogData = cleanCatalogData(data[1], alwaysInclude);
       resolve({
         courseCategories,
         cleanedCatalogData: cleanedCatalogData.data,
@@ -74,46 +74,60 @@ module.exports.requestCatalog = (wsConfig) => {
         courseMODList     : cleanedCatalogData.mod
       });
     }, err => {
-      console.warn('Error fetching catalog',err);
+      console.warn('Error fetching catalog', err);
       reject(err);
     });
 
   });
 };
 
-function cleanCatalogData(src) {
+function cleanCatalogData (src, alwaysInclude) {
+  console.log('cleanCatalogData but include', alwaysInclude);
+
   let uniqueCategories = {},
       uniqueMoD        = {},
-      data             = src.reduce((p, c) => {
-        let category = getCourseCategory(c.categoryid),
-            mod;
-        // None in the hidden categories and only available to all learners
-        if (!hiddenCategories.includes(category) && c.audiencevisible === 2) {
-          mod = getCourseDeliveryMode(c);
-          p.push({
-            category    : category,
-            datecreated : formatSecondsToDate(c.timecreated),
-            datemodified: formatSecondsToDate(c.timemodified),
-            startdate   : formatSecondsToDate(c.startdate),
-            format      : c.format,
-            id          : c.id,
-            coursecode  : c.idnumber,
-            lang        : c.lang,
-            numsections : c.numsections,
-            fullname    : c.fullname,
-            shortname   : c.shortname,
-            summary     : removeTagsStr(removeEntityStr(c.summary)),
-            deliverymode: mod,
-            deeplink    : webserviceConfig.urlStem + deepLinkURL + c.id
-          });
+      data             = src.reduce((acc, c) => {
+          let category = getCourseCategory(c.categoryid),
+              mod;
 
-          // Build a unique list of these
-          uniqueCategories[category] = null;
-          uniqueMoD[mod]             = null;
+          // If it's an always include, change this
+          if (alwaysInclude.indexOf(c.id) >= 0) {
+            c.audiencevisible = 2;
+          }
 
-        }
-        return p;
-      }, [])
+          // debug
+          // if(c.fullname.indexOf('Advanced Deployment with Red Hat OpenShift') >= 0) {
+          //  console.log('cat',c, c.fullname, c.audiencevisible);
+          // }
+
+          // None in the hidden categories and only available to all learners
+          if (!hiddenCategories.includes(category) && c.audiencevisible === 2) {
+
+            mod = getCourseDeliveryMode(c);
+            acc.push({
+              category    : category,
+              datecreated : formatSecondsToDate(c.timecreated),
+              datemodified: formatSecondsToDate(c.timemodified),
+              startdate   : formatSecondsToDate(c.startdate),
+              format      : c.format,
+              id          : c.id,
+              coursecode  : c.idnumber,
+              lang        : c.lang,
+              numsections : c.numsections,
+              fullname    : c.fullname,
+              shortname   : c.shortname,
+              summary     : removeTagsStr(removeEntityStr(c.summary)),
+              deliverymode: mod,
+              deeplink    : webserviceConfig.urlStem + deepLinkURL + c.id
+            });
+
+            // Build a unique list of these
+            uniqueCategories[category] = null;
+            uniqueMoD[mod]             = null;
+
+          }
+          return acc;
+        }, [])
         .sort(dynamicSortObjArry('fullname'));
 
   return {
@@ -124,7 +138,7 @@ function cleanCatalogData(src) {
 }
 
 // Match the ID of a course category to the loaded courseCategories
-function getCourseCategory(courseCategoryID) {
+function getCourseCategory (courseCategoryID) {
   let category = courseCategories.filter((cat) => {
     return cat.id === courseCategoryID;
   })[0];
@@ -138,7 +152,7 @@ function getCourseCategory(courseCategoryID) {
  Make a best guess at the mode of delivery. MoD is a custom field and doesn't come
  back via web service calls.
  */
-function getCourseDeliveryMode(courseObj) {
+function getCourseDeliveryMode (courseObj) {
 
   let format          = courseObj.format,
       coursetype      = courseObj.coursetype,
@@ -146,7 +160,7 @@ function getCourseDeliveryMode(courseObj) {
       numsections     = courseObj.hasOwnProperty('numsections') ? courseObj.numsections : null;
 
   if (format === 'topics' && (coursetype === 0 || coursetype === 2) && coursefmt0Value === 1 && numsections === 1) {
-    return 'ROLE'
+    return 'ROLE';
   } else if (format === 'topics' && coursetype === 2 && (coursefmt0Value === 3 || coursefmt0Value === 4)) {
     return 'Instructor-led';
   } else if (format === 'topics' && coursetype === 2 && numsections === 10) {

@@ -2,8 +2,6 @@
  * Simple router
  * Matt Perkins, hello@mattperkins.me
  *
- * Check this out for using a regex match
- *
  */
 
 /**

@@ -52,17 +52,19 @@ class ClassCalendar extends React.Component {
 
   setSearchParams () {
     let currentHash   = getCurrentRoute().data,
+        searchCategory  = currentHash.ct || '',
         searchRegion  = currentHash.rg || '',
         searchCountry = currentHash.cn || '',
         searchCity    = currentHash.cy || '',
         searchId      = currentHash.id || '',
         showFilters   = parseInt(currentHash.f) === 1 ? true : false;
 
-    console.log('Passed search params: ', searchRegion, searchCountry, searchCity, searchId);
+    console.log('Passed search params: ', searchRegion, searchCountry, searchCity, searchCategory, searchId);
     this.setState({
       selectedRegion : searchRegion,
       selectedCountry: searchCountry,
       selectedCity   : searchCity,
+      selectedCategory: searchCategory,
       searchId       : searchId,
       showFilters    : showFilters
     });
@@ -138,6 +140,7 @@ class ClassCalendar extends React.Component {
       rg: nextState.selectedRegion,
       cn: nextState.selectedCountry,
       cy: nextState.selectedCity,
+      ct: nextState.selectedCategory,
       id: nextState.searchId,
       f : nextState.showFilters ? '1' : '0'
     });
@@ -153,19 +156,14 @@ class ClassCalendar extends React.Component {
         filterId       = this.state.searchId;
 
     return events.filter((evt) => {
-      // let name          = evt.fullname.toLowerCase(),
-      //     courseCode    = evt.shortname.toLowerCase(),
-      //     summary       = evt.summary.toLowerCase(),
-      //     matchFilter   = name.indexOf(filterText) >= 0 || courseCode.indexOf(filterText) >= 0 || summary.indexOf(filterText) >= 0,
-      //     matchCategory = filterCategory.length ? evt.category === filterCategory : true,
-      //     matchMod      = filterDelivery.length ? evt.mod === filterMod : true,
-
       let matchRegion  = filterRegion.length ? evt.region === filterRegion : true,
           matchCountry = filterCountry.length ? evt.country === filterCountry : true,
           matchCity    = filterCity.length ? evt.city === filterCity : true,
+          matchCategory = filterCategory.length ? evt.category === filterCategory : true,
           matchId      = filterId.length ? evt.courseid === parseInt(filterId) : true;
+          //     matchMod      = filterDelivery.length ? evt.mod === filterMod : true,
 
-      return matchRegion && matchCountry && matchCity && matchId;
+      return matchRegion && matchCountry && matchCity && matchCategory && matchId;
     });
   }
 
@@ -180,29 +178,6 @@ class ClassCalendar extends React.Component {
 
   render () {
     let content = <p>Please wait, loading the calendar ...</p>;
-
-    /*
-    Add this to the top - NHO sites
-     NA -
-     Raleigh
-
-     APAC -
-     Singapore
-     Beijing - Parkview Green
-     Beijing - Raycom
-     Pune
-     Bangalore
-     Tokyo
-     Brisbane
-
-     EMEA -
-     Munich
-
-     LATAM -
-     Sao Paulo
-     Buenos Aires
-     Mexico City
-    */
 
     if (this.state.calendarData.events) {
       // console.log('events',this.state.calendarData.events);
@@ -332,19 +307,20 @@ class ClassCalendar extends React.Component {
 
     return (
       <div className="rh-form-inline">
-        {/*<div className="rh-form-group text-center">*/}
-        {/*<label htmlFor="mod">Delivery Mode</label>*/}
-        {/*<select name="mod" ref="modSelect" className="width-50pct">*/}
-        {/*<option value="" selected></option>*/}
-        {/*{this.state.calendarData.mod.map((c) => {*/}
-        {/*let option = <option value={c}>{c}</option>;*/}
-        {/*if (c === this.state.selectedMoD) {*/}
-        {/*option = <option value={c} selected>{c}</option>;*/}
-        {/*}*/}
-        {/*return option;*/}
-        {/*})}*/}
-        {/*</select>*/}
-        {/*</div>*/}
+        <div className="rh-form-group text-center">
+          <label htmlFor="category">Category</label>
+          <select name="category" ref="categorySelect" className="width-50pct"
+          onChange={this.onCategoryChange.bind(this)}>
+          <option value="" selected></option>
+          {this.state.calendarData.category.map((c) => {
+            let option = <option value={c}>{c}</option>;
+            if (c === this.state.selectedCategory) {
+              option = <option value={c} selected>{c}</option>;
+            }
+              return option;
+            })}
+          </select>
+        </div>
         <div className="rh-form-group text-center">
           <label htmlFor="region">Region</label>
           <select name="region" ref="regionSelect" className="width-50pct"

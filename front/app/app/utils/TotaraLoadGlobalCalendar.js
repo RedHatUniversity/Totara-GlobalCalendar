@@ -93,6 +93,7 @@ module.exports.requestCalendar = (wsConfig, alwaysInclude) => {
 
 function condenseClasses (clsData) {
   // Filter for only sessions and for the current user (user 0)
+
   return clsData
     .filter(cls => cls.eventtype === 'facetofacesession')
     .filter(cls => cls.userid === 0)
@@ -193,7 +194,6 @@ function parseClassObject (cls) {
   //if(cls.name.indexOf('Coaching Fundamentals for Managers (vILT)') >= 0) {
   //  console.log(cls.name, classDetails.schedule.start.date, classDetails.schedule.start.endTime, cls.description);
   //}
-
   return {
     courseid    : cls.courseid,
     eventtype   : cls.eventtype,

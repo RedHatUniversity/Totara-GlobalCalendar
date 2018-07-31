@@ -1,9 +1,11 @@
 import React from 'react';
 import BigCalendar from 'react-big-calendar';
 import moment from 'moment';
-import { requestCalendar } from '../utils/TotaraLoadGlobalCalendar';
-import { getReformattedData } from '../utils/ReformatEventsForRBC';
-import { getCurrentRoute, setRoute } from '../utils/HashRouter';
+// import { requestCalendar } from '../utils/TotaraLoadGlobalCalendar';
+import {getILTCalendar} from '../utils/learningservices/shadow/ShadowDB';
+import {cleanCalendarResults} from '../utils/learningservices/shadow/ParseILTCalendar';
+import {getReformattedData} from '../utils/ReformatEventsForRBC';
+import {getCurrentRoute, setRoute} from '../utils/HashRouter';
 
 // CSS styles for the calendar component
 import calcss from 'react-big-calendar/lib/css/react-big-calendar.css';
@@ -14,7 +16,7 @@ BigCalendar.setLocalizer(
 
 class ClassCalendar extends React.Component {
 
-  constructor () {
+  constructor() {
     super();
     this.state = {
       calendarData    : {
@@ -39,39 +41,32 @@ class ClassCalendar extends React.Component {
     };
   }
 
-  componentDidMount () {
+  componentDidMount() {
     this.setSearchParams();
     console.time('loading');
-    requestCalendar(this.props.config.webservice, this.props.config.alwaysInclude).then((data) => {
-      this.setCalendarData(data);
-      console.timeEnd('loading');
-    }).catch((err) => {
-      console.log('ERROR!', err);
-    });
+
+    getILTCalendar(this.props.config.webservice.shadowdb)
+      .fork(e => {
+          console.error('ERROR!', e);
+        },
+        r => {
+          let res = cleanCalendarResults(r, this.props.config.alwaysInclude);
+
+          this.setCalendarData(res);
+          console.timeEnd('loading');
+        });
   }
 
-  setSearchParams () {
-    let currentHash   = getCurrentRoute().data,
-        searchCategory  = currentHash.ct || '',
-        searchRegion  = currentHash.rg || '',
-        searchCountry = currentHash.cn || '',
-        searchCity    = currentHash.cy || '',
-        searchId      = currentHash.id || '',
-        showFilters   = parseInt(currentHash.f) === 1 ? true : false;
+  setCalendarData(data) {
+    let cleanedCalendarData = getReformattedData(data);
 
-    console.log('Passed search params: ', searchRegion, searchCountry, searchCity, searchCategory, searchId);
-    this.setState({
-      selectedRegion : searchRegion,
-      selectedCountry: searchCountry,
-      selectedCity   : searchCity,
-      selectedCategory: searchCategory,
-      searchId       : searchId,
-      showFilters    : showFilters
-    });
-  }
+    // console.log('mod           :', cleanedCalendarData.mod);
+    // console.log('category      :', cleanedCalendarData.category);
+    // console.log('region        :', cleanedCalendarData.region);
+    // console.log('country       :', cleanedCalendarData.country);
+    // console.log('city          :', cleanedCalendarData.city);
+    // console.log('hierarchy     :', cleanedCalendarData.hierarchy);
 
-  setCalendarData (data) {
-    let cleanedCalendarData = getReformattedData(data.calendar);
     this.setState({
       calendarData: {
         raw           : data,
@@ -87,15 +82,35 @@ class ClassCalendar extends React.Component {
     });
   }
 
-  onCategoryChange (e) {
+  setSearchParams() {
+    let currentHash    = getCurrentRoute().data,
+        searchCategory = currentHash.ct || '',
+        searchRegion   = currentHash.rg || '',
+        searchCountry  = currentHash.cn || '',
+        searchCity     = currentHash.cy || '',
+        searchId       = currentHash.id || '',
+        showFilters    = parseInt(currentHash.f) === 1 ? true : false;
+
+    console.log('Passed search params: ', searchRegion, searchCountry, searchCity, searchCategory, searchId);
+    this.setState({
+      selectedRegion  : searchRegion,
+      selectedCountry : searchCountry,
+      selectedCity    : searchCity,
+      selectedCategory: searchCategory,
+      searchId        : searchId,
+      showFilters     : showFilters
+    });
+  }
+
+  onCategoryChange(e) {
     this.setState({selectedCategory: this.refs.categorySelect.value});
   }
 
-  onMoDChange (e) {
+  onMoDChange(e) {
     this.setState({selectedMoD: this.refs.modSelect.value});
   }
 
-  onRegionChange (e) {
+  onRegionChange(e) {
     let region  = this.refs.regionSelect.value,
         country = this.autoSelectCountry(region),
         city    = this.autoSelectCity(region, country);
@@ -107,7 +122,7 @@ class ClassCalendar extends React.Component {
     });
   }
 
-  onCountryChange (e) {
+  onCountryChange(e) {
     let region  = this.refs.regionSelect.value,
         country = this.refs.countrySelect.value,
         city    = this.autoSelectCity(region, country);
@@ -115,11 +130,11 @@ class ClassCalendar extends React.Component {
     this.setState({selectedCountry: country, selectedCity: city});
   }
 
-  onCityChange (e) {
+  onCityChange(e) {
     this.setState({selectedCity: this.refs.citySelect.value});
   }
 
-  autoSelectCountry (region) {
+  autoSelectCountry(region) {
     if (region.length < 1) {
       return '';
     }
@@ -127,7 +142,7 @@ class ClassCalendar extends React.Component {
     return countries.length === 1 ? countries[0] : '';
   }
 
-  autoSelectCity (region, country) {
+  autoSelectCity(region, country) {
     if (region.length < 1 || country.length < 1) {
       return '';
     }
@@ -135,7 +150,7 @@ class ClassCalendar extends React.Component {
     return cities.length === 1 ? cities[0] : '';
   }
 
-  componentWillUpdate (nextProps, nextState) {
+  componentWillUpdate(nextProps, nextState) {
     setRoute('/', {
       rg: nextState.selectedRegion,
       cn: nextState.selectedCountry,
@@ -146,7 +161,7 @@ class ClassCalendar extends React.Component {
     });
   }
 
-  getFilteredCalendarEvents () {
+  getFilteredCalendarEvents() {
     let events         = this.state.calendarData.events,
         filterMod      = this.state.selectedMoD,
         filterCategory = this.state.selectedCategory,
@@ -156,12 +171,12 @@ class ClassCalendar extends React.Component {
         filterId       = this.state.searchId;
 
     return events.filter((evt) => {
-      let matchRegion  = filterRegion.length ? evt.region === filterRegion : true,
-          matchCountry = filterCountry.length ? evt.country === filterCountry : true,
-          matchCity    = filterCity.length ? evt.city === filterCity : true,
+      let matchRegion   = filterRegion.length ? evt.region === filterRegion : true,
+          matchCountry  = filterCountry.length ? evt.country === filterCountry : true,
+          matchCity     = filterCity.length ? evt.city === filterCity : true,
           matchCategory = filterCategory.length ? evt.category === filterCategory : true,
-          matchId      = filterId.length ? evt.courseid === parseInt(filterId) : true;
-          //     matchMod      = filterDelivery.length ? evt.mod === filterMod : true,
+          matchId       = filterId.length ? evt.courseid === parseInt(filterId) : true;
+      //     matchMod      = filterDelivery.length ? evt.mod === filterMod : true,
 
       return matchRegion && matchCountry && matchCity && matchCategory && matchId;
     });
@@ -171,12 +186,12 @@ class ClassCalendar extends React.Component {
   //  Render
   //----------------------------------------------------------------------------
 
-  selectEvent (event) {
+  selectEvent(event) {
     console.log('selected event', event);
     window.open(event.link);
   }
 
-  render () {
+  render() {
     let content = <p>Please wait, loading the calendar ...</p>;
 
     if (this.state.calendarData.events) {
@@ -273,7 +288,7 @@ class ClassCalendar extends React.Component {
     </div>);
   }
 
-  getEventStyle (event, start, end, isSelected) {
+  getEventStyle(event, start, end, isSelected) {
     let backgroundColor = '#666666';
     if (event.category === 'Manager Development and Team Leadership') {
       backgroundColor = '#0B85CB';
@@ -292,7 +307,7 @@ class ClassCalendar extends React.Component {
     };
   }
 
-  renderFilterForm () {
+  renderFilterForm() {
     let availableCities    = this.state.calendarData.city,
         availableCountries = this.state.calendarData.country,
         disableCountry     = this.state.selectedRegion.length < 1,
@@ -310,13 +325,13 @@ class ClassCalendar extends React.Component {
         <div className="rh-form-group text-center">
           <label htmlFor="category">Category</label>
           <select name="category" ref="categorySelect" className="width-50pct"
-          onChange={this.onCategoryChange.bind(this)}>
-          <option value="" selected></option>
-          {this.state.calendarData.category.map((c) => {
-            let option = <option value={c}>{c}</option>;
-            if (c === this.state.selectedCategory) {
-              option = <option value={c} selected>{c}</option>;
-            }
+                  onChange={this.onCategoryChange.bind(this)}>
+            <option value="" selected></option>
+            {this.state.calendarData.category.map((c) => {
+              let option = <option value={c}>{c}</option>;
+              if (c === this.state.selectedCategory) {
+                option = <option value={c} selected>{c}</option>;
+              }
               return option;
             })}
           </select>

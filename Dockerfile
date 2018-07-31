@@ -9,7 +9,7 @@ ENV HOME=/usr/src/app
 # Install deps
 WORKDIR $HOME
 COPY . $HOME/
-RUN npm config set registry http://registry.npmjs.org/ && npm install && npm cache clean
+RUN npm config set registry http://registry.npmjs.org/ && npm install
 
 # Run it
 EXPOSE 8080

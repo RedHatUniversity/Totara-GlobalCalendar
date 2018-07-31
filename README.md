@@ -4,6 +4,11 @@ The F2F calendar in Totara is a few user experience limitations. We created this
 
 Contact: Matt Perkins, mperkins@redhat.com
 
+# Possible issues for classes not displaying
+
+1. Classes must be visible to 'All Users' (audiencevisible set to 2)
+2. Class title must not have the word 'private' (capitalized in any way)
+3. Classes must have a corresponding course in the catalog. Some information isn't available from the class/calendar event feed so I get this from the catalog entry.
 
 ## Dev notes
 

@@ -3,15 +3,11 @@
  * https://github.com/intljusticemission/react-big-calendar
  */
 
-import moment from 'moment';
-import { tzTable } from './timezones';
-import {
-  uniqueArry,
-  convertDateToTimeZone
-} from './../../../../shared/utils/Toolbox';
+import moment from 'moment-timezone';
+import {uniqueArry} from './../../../../shared/utils/Toolbox';
 
 // Create the data
-function getReformattedData (data) {
+function getReformattedData(data) {
   let events = reformatEventArray(data);
   return {
     events   : events,
@@ -24,17 +20,16 @@ function getReformattedData (data) {
   };
 }
 
-function reformatEventArray (data) {
+function reformatEventArray(data) {
   return data.reduce((evts, course) => {
+    course.classes.forEach(cls => {
 
-    course.classes.forEach((cls) => {
-      //console.log('Reformatting', cls);
-
-      let startTime = cls.classDetails.schedule.start,
-          endTime   = cls.classDetails.schedule.end,
-          region    = cls.classDetails.region,
-          country   = cls.classDetails.country,
-          city      = cls.classDetails.city;
+      let startTime = cls.startdate,
+          endTime   = cls.enddate,
+          region    = cls.region,
+          country   = cls.country,
+          city      = cls.city,
+          timeZone  = cls.timeZone;
 
       // Error in Totara web services with Singapore
       if (city.toLowerCase() === 'singapore') {
@@ -42,35 +37,41 @@ function reformatEventArray (data) {
       }
 
       if (!isKeyValInObjArray(evts, 'link', cls.signupLink)) {
+        let startM        = getEventStartTimeMoment(startTime, timeZone),
+            endM          = getEventEndTimeMoment(startTime, endTime, timeZone),
+            localTZ       = moment.tz.guess(),
+            localStartMTZ = startM.clone().tz(localTZ),
+            localEndMTZ   = endM.clone().tz(localTZ);
+
         evts.push({
           title   : cls.fullname,
-          allDay  : false, //isAllDay(startTime, endTime),
-          start   : getEventStartTime(startTime),
-          end     : getEventEndTime(startTime, endTime),
-          desc    : course.summary,
+          allDay  : false,
+          start   : localStartMTZ.toDate(),
+          end     : localEndMTZ.toDate(),
+          desc    : '',
           link    : cls.signupLink,
           courseid: cls.courseid,
-          id      : cls.id,
-          category: course.category,
-          mod     : cls.classDetails.mod,
+          id      : cls.courseid,
+          category: cls.category,
+          mod     : cls.mod,
           region  : region,
           country : country,
           city    : city
         });
       }
-
     });
 
     return evts;
   }, []);
 }
 
-function isKeyValInObjArray (arry, key, val) {
+function isKeyValInObjArray(arry, key, val) {
   return arry.filter(e => e[key] === val).length > 0;
 }
 
+// DISABLED
 // Determine if an event is all day
-function isAllDay (start, end) {
+function isAllDay(start, end) {
   // If it has an end date then it's multi-day
   if (end.date) {
     return true;
@@ -79,79 +80,77 @@ function isAllDay (start, end) {
       endhr   = getHourFromTimeStr(start.endTime);
 
   // starts before 9 and ends after 4
-  return (starthr <= 9 && endhr >= 16);
+  return starthr <= 9 && endhr >= 16;
 }
 
-function getHourFromTimeStr (timestr) {
+function getHourFromTimeStr(timestr) {
   return parseInt(timestr.split(':')[0]);
 }
 
-function convertDateTimeToMoment (date, time) {
-  return moment(date + ' ' + time, 'MMMM D, YYYY HH:mm');
+function convertDateTimeToMoment(date, time, tz) {
+  // return moment.tz(date + ' ' + time, 'MMMM D, YYYY HH:mm', tz);
+  return moment.tz(date, 'MMMM D, YYYY HH:mm', tz);
 }
 
-function getEventStartTime (start) {
-  let date = convertDateTimeToMoment(start.date, start.startTime).toDate();
-  return convertDateToTimeZone(date, getTimeZoneOffset(start.zone));
+function getEventStartTimeMoment(start, tz) {
+  // return convertDateTimeToMoment(start.date, start.startTime, tz);
+  return convertDateTimeToMoment(start, 0, tz);
 }
 
-function getEventEndTime (start, end) {
+function getEventEndTimeMoment(start, end, tz) {
   let date;
-  if (!end.date) {
-    date = convertDateTimeToMoment(start.date, start.endTime);
+  if (!end) {
+    // date = convertDateTimeToMoment(start.date, start.endTime, tz);
+    date = convertDateTimeToMoment(start, 0, tz);
   } else {
-    date = convertDateTimeToMoment(end.date, end.endTime);
+    // date = convertDateTimeToMoment(end.date, end.endTime, tz);
+    date = convertDateTimeToMoment(end, 0, tz);
   }
-  return convertDateToTimeZone(date.toDate(), getTimeZoneOffset(start.zone));
+  // return convertDateToTimeZone(date.toDate(), getTimeZoneOffset(start.zone));
+  return date;
 }
 
 // Convert event's local timezone in to the user's timezone
-function getTimeZoneOffset (tgtzone) {
-  // Disabled, MP 5/24/17
-  //let zoneObject = tzTable.filter((zone) => zone.utc.includes(tgtzone))[0];
-  //
-  //const wsOffset = -4;
-  //
-  //if (zoneObject) {
-  //  console.log('Time zone',tgtzone,zoneObject.offset + wsOffset);
-  //  return zoneObject.offset + wsOffset;
-  //}
-  //console.warn('No timezone found for', tgtzone);
+function getTimeZoneOffset(startM, tgtzone) {
+  // let browserTZOffset = moment().utcOffset() / 60;
+  // console.log(startM.clone().local().format("DD-MM-YYYY h:mm:ss A")); // local time
+  console.log(startM.clone().tz(tgtzone).toDate()); // 30-03-2017 2:34:22 PM
+  // console.warn('No timezone found for', tgtzone);
   return 0;
 }
 
 // TODO merge building these into the reformatEventsArray function
 
 // Extract unique courseCategories from the loaded courses
-function buildCategoryList (data) {
-  return uniqueArry(data.map((course) => course.category));
+function buildCategoryList(data) {
+  return uniqueArry(data.map(course => course.category));
 }
 
 // Extract unique MoDs from the loaded courses
-function buildMoDList (data) {
-  return uniqueArry(data.map((course) => course.mod));
+function buildMoDList(data) {
+  return uniqueArry(data.map(course => course.mod));
 }
 
 // Extract unique MoDs from the loaded courses
-function buildRegionList (data) {
-  return uniqueArry(data.map((course) => course.region));
+function buildRegionList(data) {
+  return uniqueArry(data.map(course => course.region));
 }
 
 // Extract unique MoDs from the loaded courses
-function buildCountryList (data) {
-  return uniqueArry(data.map((course) => course.country));
+function buildCountryList(data) {
+  return uniqueArry(data.map(course => course.country));
 }
 
 // Extract unique MoDs from the loaded courses
-function buildCityList (data) {
-  return uniqueArry(data.map((course) => course.city));
+function buildCityList(data) {
+  return uniqueArry(data.map(course => course.city));
 }
 
 /*
  Builds an tree of the cities in countries and countries in regions for the
  filtering menus. Keys are the names
  */
-function buildHierarchy (data) {
+function buildHierarchy(data) {
   return data.reduce((hier, cls) => {
     if (!hier.hasOwnProperty(cls.region)) {
       hier[cls.region] = {};

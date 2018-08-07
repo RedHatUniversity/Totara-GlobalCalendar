@@ -34,7 +34,7 @@ Array of
 // let counter  = 0;
 // let today = new Date();
 
-const audienceAndIsInInclude = (include, cls) => cls.audience_visible === 2 || include.indexOf(cls.course_id) >= 0;
+const audienceAndIsInInclude = (include, cls) => cls.audience_visible === 2 || cls.audience_visable === 2 || include.indexOf(cls.course_id) >= 0;
 
 const cleanCalendarResults = (raw, alwaysInclude) => raw
   .filter(cls => cls.private !== '1')
@@ -56,6 +56,7 @@ const cleanCalendarResults = (raw, alwaysInclude) => raw
       calendar[calendarIdx].classes.push(hydratedClassObj);
     } else {
       // Create the calendar entry using the first class information a template
+      //console.log(cls.course_category_name);
       calendar.push({
         name      : cls.course_name,
         duration  : cls.duration,

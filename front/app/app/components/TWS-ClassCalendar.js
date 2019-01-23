@@ -270,6 +270,8 @@ class ClassCalendar extends React.Component {
                         <li>Sao Paulo</li>
                         <li>Buenos Aires</li>
                         <li>Mexico City</li>
+                        <li>Bogota</li>
+                        <li>Santiago</li>
                       </ul>
                     </div>
                   </div>
